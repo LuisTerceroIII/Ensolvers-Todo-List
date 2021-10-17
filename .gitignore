@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+ensolver_exam_view/node_modules
+
+
+
