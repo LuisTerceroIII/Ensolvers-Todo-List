@@ -1,175 +1,192 @@
-import './App.css';
-import React, {useState, useEffect} from "react";
-import {useForm} from "react-hook-form";
-import Loader from "react-loader-spinner";
-import Task from "./components/Task/Task";
-import {TodoApiService} from "./services/TodoApiService";
+import "./App.css";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { TodoApiService } from "./services/TodoApiService";
+import Folders from "./components/Folders";
+import SearchByUsername from "./components/SearchByUsername";
+import CreateNewFolder from "./components/CreateNewFolder";
+import CreateTask from "./components/CreateTask";
+import Tasks from "./components/Tasks";
 
-function App() {
-    const {register, handleSubmit} = useForm();
+const App = () => {
+  const { register, handleSubmit } = useForm();
 
-    const [submitButton, setSubmitButton] = useState("userSearch");
-    const [username, setUsername] = useState("luisterceroiii");
-    const [activeUserId, setActiveUserId] = useState(0);
-    const [searchingFolders, setSearchingFolders] = useState(false)
-    const [userFolders, setUserFolders] = useState([])
-    const [isAFolderSelected, setIsAFolderSelected] = useState(false)
-    const [selectedFolder, setSelectedFolder] = useState('')
-    const [tasks, setTasks] = useState([])
-    const [task, setTask] = useState({
-        user_id: 1,
-        folder_id: 2,
-        description: "Smile",
-        completed: true
-    })
-    const [taskDescriptionUpdate, setTaskDescriptionUpdate] = useState("")
-    const [activeEditTask, setActiveEditTask] = useState({
-        taskId: 0,
-        activeEdition: false
-    })
+  const [submitButton, setSubmitButton] = useState("userSearch");
+  const [username, setUsername] = useState("luisterceroiii");
+  const [activeUserId, setActiveUserId] = useState(0);
+  const [searchingFolders, setSearchingFolders] = useState(false);
+  const [userFolders, setUserFolders] = useState([]);
+  const [isAFolderSelected, setIsAFolderSelected] = useState(false);
+  const [selectedFolder, setSelectedFolder] = useState("");
+  const [tasks, setTasks] = useState([]);
+  const [userNotFound, setUSerNotFound] = useState(false);
 
-    const [userNotFound, setUSerNotFound] = useState(false)
+  const handleSelectedUser = (data) => {
+    setSearchingFolders(true);
+    TodoApiService()
+      .searchUser(data.username)
+      .then((res) => {
+        setActiveUserId(res.data[0].idUser);
+        setUserFolders(res.data);
+        setSearchingFolders(false);
+        setUsername("");
+        setUSerNotFound(false);
+      })
+      .catch((err) => {
+        setUSerNotFound(true);
+        setSearchingFolders(false);
+      });
+  };
 
-
-    useEffect(() => {
-        console.log("render")
-    }, [username, userFolders, searchingFolders])
-
-
-    const onSubmit = (data) => {
-        console.log(submitButton)
-        console.log(data)
-        if (submitButton === "searchUser") {
-            setSearchingFolders(true)
-            const receivedUsername = data.username
-            TodoApiService().searchUser(receivedUsername).then(res => {
-                console.log(res.data)
-                setActiveUserId(res.data[0].idUser)
-                setUserFolders(res.data)
-                setSearchingFolders(false)
-                setUsername("")
-                setUSerNotFound(false)
-
-            }).catch(err => {
-                setUSerNotFound(true)
-            })
-        } else if (submitButton === "newFolder") {
-            if (data.newFolder.length > 0)
-                TodoApiService().newFolder(activeUserId,data.newFolder)
-                    .then(res => {
-                        if(res.data) {
-                            console.log(res.data)
-                            const newFolderCreate = res.data
-                            userFolders.push(newFolderCreate)
-                            setUserFolders([...userFolders])
-                        }
-
-                    })
-
-
-
-            console.log(userFolders)
-        } else if (submitButton === "newTask") {
-            if(data.newTask.length > 0) {
-                const newTask = {
-                    description : data.newTask,
-                    completed : false
-                }
-                TodoApiService().createTask(activeUserId,selectedFolder.idFolder,newTask)
-                    .then((res) => {
-                        console.log("RESSS:::",res)
-                        tasks.push(res.data)
-                        setTasks([...tasks])
-                    }).catch((err)=> console.log(err))
-
-
-            }
-        }
-
-    };
-
-    const updateTaskDescription = (task) => {
-        const updateTasks = tasks.filter(elem => elem.taskId !== task.taskId)
-        console.log(updateTasks)
-        updateTasks.push(task)
-        setTasks([])
-        setTasks([...updateTasks])
+  const handleNewFolder = (data) => {
+    if (data.newFolder.length > 0) {
+      TodoApiService()
+        .newFolder(activeUserId, data.newFolder)
+        .then((res) => {
+          if (res.data) {
+            const newFolderCreate = res.data;
+            userFolders.push(newFolderCreate);
+            setUserFolders([...userFolders]);
+          }
+        });
     }
+  };
 
-    return (
-        <div className="App">
+  const handleCreateTask = (res) => {
+    tasks.push(res.data);
+    setTasks([...tasks]);
+  };
 
-            <h1> TO-DO - APP </h1>
+  const handleNewTask = (data) => {
+    if (data.newTask.length > 0) {
+      const newTask = {
+        description: data.newTask,
+        completed: false,
+      };
+      TodoApiService()
+        .createTask(activeUserId, selectedFolder.idFolder, newTask)
+        .then((res) => {
+          handleCreateTask(res);
+        })
+        .catch((err) => console.log(err));
+    }
+  };
 
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <label> Search folders by user name</label>
-                <input defaultValue={username}
-                       {...register("username")}
-                />
-                <button type={"submit"} onClick={() => setSubmitButton("searchUser")}>Search</button>
-            </form>
+  const handleUpdateTaskDescription = (task) => {
+    const updateTasks = tasks.filter((elem) => elem.taskId !== task.taskId);
+    console.log(updateTasks);
+    updateTasks.push(task);
+    setTasks([]);
+    setTasks([...updateTasks]);
+  };
 
-            {userNotFound ? <p>User not found, try with "luisterceroiii" &#128521;</p> : ""}
-            {!isAFolderSelected ? <p>Folders</p> : <p>Folders > {selectedFolder.name}</p>}
+  const handleViewFolderItems = (folder) => {
+    setSelectedFolder(folder);
+    setTasks([]);
+    TodoApiService()
+      .taskByFolder(folder.idUser, folder.idFolder)
+      .then((res) => {
+        console.log(res.data);
+        setTasks(res.data);
+        setIsAFolderSelected(true);
+      });
+  };
 
-            <div className={"foldersContainer"}>
-                {searchingFolders && !isAFolderSelected ? <Loader
-                        type="TailSpin"
-                        color="#00BFFF"
-                        height={40}
-                        width={40}
-                        timeout={3000} //3 secs
-                    />
-                    : userFolders.map((folder, i) => {
-                        return (
-                            <p key={i}> - {folder.name} <a href={"#"} onClick={() => {
-                                console.log("VIEWW", folder)
-                                setSelectedFolder(folder)
-                                setTasks([])
-                                TodoApiService().taskByFolder(folder.idUser, folder.idFolder)
-                                    .then(res => {
-                                        console.log(res.data)
-                                        setTasks(res.data)
-                                        setIsAFolderSelected(true)
-                                    })
+  const handleRemoveFolder = (folder) => {
+    TodoApiService()
+      .deleteFolder(folder.idFolder)
+      .then((res) => {
+        if (res.data) {
+          setUserFolders(
+            userFolders.filter((elem) => elem.idFolder !== folder.idFolder)
+          );
 
-                            }}>View items</a> <a href={"#"} onClick={() => {
-                                console.log(folder.idFolder)
-                                TodoApiService().deleteFolder(folder.idFolder).then(res => {
-                                    if(res.data) {
-                                        setUserFolders(userFolders.filter(elem => elem.idFolder !== folder.idFolder))
-                                    }
-                                })
-                            }}>Remove</a></p>
-                        )
-                    })
+          const tasksToShow = tasks.filter(
+            (taskElem) => taskElem.folderId !== folder.idFolder
+          );
+          setTasks(tasksToShow);
+        }
+      });
+  };
 
+  const onSubmit = (data) => {
+    if (submitButton === "searchUser") {
+      handleSelectedUser(data);
+    } else if (submitButton === "newFolder") {
+      handleNewFolder(data);
+    } else if (submitButton === "newTask") {
+      handleNewTask(data);
+    }
+  };
 
-                }
-                {userFolders.length > 0 ? <form onSubmit={handleSubmit(onSubmit)}>
-                    <input placeholder={"new Folder"}
-                           {...register("newFolder")}/>
-                    <button onClick={() => setSubmitButton("newFolder")}>New Folder</button>
-                </form> : ""}
+  const isUserFound = userNotFound ? (
+    <p>User not found, try with "luisterceroiii" &#128521;</p>
+  ) : (
+    ""
+  );
 
-            </div>
+  const folderTitle = !isAFolderSelected ? (
+    <p>Folders</p>
+  ) : (
+    <p>Folders > {selectedFolder.name}</p>
+  );
 
-            <div className={"tasksContainer"}>
-                {isAFolderSelected ?
-                    tasks.map((task, i) => {
-                            return <Task key={i} id={task.taskId} checked={task.completed} description={task.description} task={task} tasks={tasks} setTasks={setTasks} updateTaskDescription={updateTaskDescription}/>
-                        })
-                     : ""
-                }
+  return (
+    <div className="App">
+      <h1> TO - DO - APP </h1>
+      <a
+        href={"https://luisterceroiii.github.io/Luis-Espinoza-Navarrete/"}
+        target="_blank"
+      >
+        {" "}
+        By Luis Espinoza
+      </a>
 
-                {isAFolderSelected ? <form onSubmit={handleSubmit(onSubmit)}>
-                    <input placeholder={"new Task"}
-                           {...register("newTask")}/>
-                    <button onClick={() => setSubmitButton("newTask")}>New Task</button>
-                </form> : ""}
-            </div>
-        </div>
-    );
-}
+      <SearchByUsername
+        username={username}
+        onSubmit={onSubmit}
+        handleSubmit={handleSubmit}
+        register={register}
+        setSubmitButton={setSubmitButton}
+      />
+
+      {isUserFound}
+      {folderTitle}
+
+      <div className={"foldersContainer"}>
+        <Folders
+          userFolders={userFolders}
+          handleRemoveFolder={handleRemoveFolder}
+          handleViewFolderItems={handleViewFolderItems}
+          isAFolderSelected={isAFolderSelected}
+          searchingFolders={searchingFolders}
+        />
+        <CreateNewFolder
+          setSubmitButton={setSubmitButton}
+          register={register}
+          handleSubmit={handleSubmit}
+          onSubmit={onSubmit}
+          userFolders={userFolders}
+        />
+      </div>
+
+      <div className={"tasksContainer"}>
+        <Tasks
+          isAFolderSelected={isAFolderSelected}
+          handleUpdateTaskDescription={handleUpdateTaskDescription}
+          setTasks={setTasks}
+          tasks={tasks}
+        />
+        <CreateTask
+          setSubmitButton={setSubmitButton}
+          register={register}
+          handleSubmit={handleSubmit}
+          onSubmit={onSubmit}
+          isAFolderSelected={isAFolderSelected}
+        />
+      </div>
+    </div>
+  );
+};
 
 export default App;
