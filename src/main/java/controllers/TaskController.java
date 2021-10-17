@@ -33,7 +33,7 @@ public class TaskController {
     private ResponseEntity<TaskResponse> getTaskById(@PathVariable("taskId") Long taskId) {
         return taskService.getTaskById(taskId);
     }
-    @PostMapping("/user/{userId}/folderId/{folderId}")
+    @PostMapping("/user/{userId}/folder/{folderId}")
     public ResponseEntity<TaskResponse> createTask(@PathVariable("userId") Long userId,
                                                    @PathVariable("folderId") Long folderId,
                                                    @RequestBody TaskRequest receivedTask) {
