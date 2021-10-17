@@ -2,11 +2,11 @@ import "./App.css";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { TodoApiService } from "./services/TodoApiService";
-import Folders from "./components/Folders";
-import SearchByUsername from "./components/SearchByUsername";
-import CreateNewFolder from "./components/CreateNewFolder";
-import CreateTask from "./components/CreateTask";
-import Tasks from "./components/Tasks";
+import Folders from "./components/Folders/Folders";
+import SearchByUsername from "./components/SearchByUsername/SearchByUsername";
+import CreateNewFolder from "./components/CreateNewFolder/CreateNewFolder";
+import CreateTask from "./components/CreateTask/CreateTask";
+import Tasks from "./components/Tasks/Tasks";
 
 const App = () => {
   const { register, handleSubmit } = useForm();

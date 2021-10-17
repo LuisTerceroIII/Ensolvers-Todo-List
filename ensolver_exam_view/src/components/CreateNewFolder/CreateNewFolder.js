@@ -9,7 +9,7 @@ const CreateNewFolder = ({
 }) => {
   return userFolders.length > 0 ? (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <input placeholder={"new Folder"} {...register("newFolder")} />
+      <input placeholder={"new Folders"} {...register("newFolder")} />
       <button onClick={() => setSubmitButton("newFolder")}>New Folder</button>
     </form>
   ) : (
