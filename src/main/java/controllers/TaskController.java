@@ -1,21 +1,12 @@
 package controllers;
 
-
 import controllers.customRequest.TaskRequest;
 import controllers.customResponses.TaskResponse;
-import model.entities.FolderTasks;
-import model.entities.Task;
-import model.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import repositories.FolderTasksRepository;
-import repositories.TaskRepository;
-import repositories.UserRepository;
 import services.TaskService;
 
-import javax.persistence.EntityNotFoundException;
 
 @RestController
 @RequestMapping("/to-do-list/v1/task")
