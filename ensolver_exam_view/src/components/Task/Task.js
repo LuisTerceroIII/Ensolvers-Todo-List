@@ -1,71 +1,43 @@
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
+import React, { useState, useEffect } from "react";
+import TaskView from "./TaskView";
 import { TodoApiService } from "../../services/TodoApiService";
-import "./Task.css";
 
-const Task = (props) => {
-  const { register, handleSubmit } = useForm();
-  const [checked, setChecked] = useState(props.checked);
-  const [activeEditTask, setActiveEditTask] = useState({});
+const Task = ({ isCheck, description, taskId }) => {
+  const [checked, setChecked] = useState(isCheck);
+  const [descriptionState, setDescription] = useState(description);
 
-  const handleChangeCheckboxState = () => {
+  const handleChangeCheckState = () => {
     setChecked(!checked);
-    TodoApiService()
-      .updateTaskState(props.id, !checked)
-      .then((res) => {})
-      .catch((err) => console.log(err));
   };
 
-  const onSubmit = (data) => {
-    console.log(activeEditTask);
-    TodoApiService()
-      .updateTaskDescription(activeEditTask.taskId, data.editDescription)
-      .then(async (res) => {
-        const updateTask = {
-          taskId: res.data.taskId,
-          folderId: res.data.folderId,
-          userId: res.data.userId,
-          description: data.editDescription,
-          completed: res.data.completed,
-        };
-        props.updateTaskDescription(updateTask);
-      })
-      .catch((err) => console.log(err));
+  const handleEditDescription = (data, e) => {
+    e.target.reset();
+    if (data.editDescription.length > 0) {
+      setDescription(data.editDescription);
+    }
   };
+
+  useEffect(() => {
+    if (descriptionState !== description) {
+      TodoApiService()
+        .updateTaskDescription(taskId, descriptionState)
+        .then((res) => {});
+    }
+  }, [descriptionState]);
+
+  useEffect(() => {
+    TodoApiService()
+      .updateTaskState(taskId, !isCheck)
+      .then((res) => {});
+  }, [checked]);
+
   return (
-    <div className={"task"}>
-      <input
-        type={"checkbox"}
-        checked={checked}
-        onChange={() => handleChangeCheckboxState()}
-      />
-      {props.description}
-
-      {activeEditTask.activeEdition &&
-      props.task.taskId === activeEditTask.taskId ? (
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <input
-            placeholder={"edit description"}
-            {...register("editDescription")}
-          />
-          <button>Edit</button>
-        </form>
-      ) : (
-        ""
-      )}
-      <a
-        href={"#"}
-        onClick={() => {
-          setActiveEditTask({
-            taskId: props.task.taskId,
-            activeEdition: !activeEditTask.activeEdition,
-          });
-        }}
-      >
-        {" "}
-        Edit
-      </a>
-    </div>
+    <TaskView
+      isCheck={checked}
+      description={descriptionState}
+      changeCheckState={handleChangeCheckState}
+      editDescription={handleEditDescription}
+    />
   );
 };
 
