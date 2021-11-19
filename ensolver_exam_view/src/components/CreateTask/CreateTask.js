@@ -1,15 +1,17 @@
-import React, { useContext } from "react";
+import React, {useContext, useState} from "react";
 import CreateTaskView from "./CreateTaskView";
 import UserTodolistContext from "../../context/UserTodolistContext";
 import { TodoApiService } from "../../services/TodoApiService";
 
 const CreateTask = () => {
   const foldersData = useContext(UserTodolistContext);
+  const [loading, setLoading] = useState(false);
 
   const handleCreateTask = (data, e) => {
     e.target.reset(); // clean the input
 
     if (data.newTask.length > 0) {
+      setLoading(true);
       let { idUser, idFolder } = foldersData.folder.folder;
       let newTask = {
         description: data.newTask,
@@ -20,7 +22,9 @@ const CreateTask = () => {
         .createTask(idUser, idFolder, newTask)
         .then((res) => {
           if (res.status === 202) {
+            setLoading(false);
             let folderData = foldersData.folder;
+            console.log(res.data)
             folderData.tasks.push(res.data);
             foldersData.setFolder({ ...folderData });
           }
@@ -28,6 +32,6 @@ const CreateTask = () => {
         .catch((err) => console.error("ERROR:::", err));
     }
   };
-  return <CreateTaskView createTask={handleCreateTask} />;
+  return <CreateTaskView createTask={handleCreateTask} loading={loading}/>;
 };
 export default CreateTask;

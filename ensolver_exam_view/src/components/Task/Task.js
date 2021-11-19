@@ -5,6 +5,7 @@ import { TodoApiService } from "../../services/TodoApiService";
 const Task = ({ isCheck, description, taskId }) => {
   const [checked, setChecked] = useState(isCheck);
   const [descriptionState, setDescription] = useState(description);
+  const [loading, setLoading] = useState(false);
 
   const handleChangeCheckState = () => {
     setChecked(!checked);
@@ -19,15 +20,18 @@ const Task = ({ isCheck, description, taskId }) => {
 
   useEffect(() => {
     if (descriptionState !== description) {
+      setLoading(true);
       TodoApiService()
         .updateTaskDescription(taskId, descriptionState)
-        .then((res) => {});
+        .then((res) => {
+          if(res.status === 202) setLoading(false);
+        });
     }
   }, [descriptionState]);
 
   useEffect(() => {
     TodoApiService()
-      .updateTaskState(taskId, !isCheck)
+      .updateTaskState(taskId, checked)
       .then((res) => {});
   }, [checked]);
 
@@ -37,6 +41,7 @@ const Task = ({ isCheck, description, taskId }) => {
       description={descriptionState}
       changeCheckState={handleChangeCheckState}
       editDescription={handleEditDescription}
+      loading={loading}
     />
   );
 };
