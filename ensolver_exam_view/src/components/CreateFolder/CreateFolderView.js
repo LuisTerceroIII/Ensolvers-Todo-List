@@ -25,7 +25,6 @@ const CreateFolderView = ({ createNewFolder, loading, error }) => {
 			size="small"
             endIcon={<SaveIcon />}
             loading={loading}
-
            
           >
             <Typography>Save</Typography>

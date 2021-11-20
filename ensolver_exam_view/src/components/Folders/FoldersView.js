@@ -17,9 +17,9 @@ const FoldersView = ({ handleViewFolderItems, handleRemoveFolder, loadingFolder,
   const foldersData = useContext(UserTodolistContext);
   const navigate = useNavigate();
   const goHome = () => {
-	loginContext.setLogged(false);
-	loginContext.setCredentials("");
-	navigate("/");
+  	loginContext.setLogged(false);
+  	loginContext.setCredentials("");
+  	navigate("/");
   }
   const folders = foldersData.folders.map((folder, i) => {
     return (
