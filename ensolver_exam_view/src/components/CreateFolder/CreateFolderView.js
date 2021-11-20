@@ -21,7 +21,7 @@ const CreateFolderView = ({ createNewFolder, loading, error }) => {
           </TextField>
           <LoadingButton
             type={"submit"}
-            variant={"contained"}
+            variant={"outlined"}
 			size="small"
             endIcon={<SaveIcon />}
             loading={loading}
