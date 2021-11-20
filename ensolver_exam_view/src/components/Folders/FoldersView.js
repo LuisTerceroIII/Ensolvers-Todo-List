@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import UserTodolistContext from "../../context/UserTodolistContext";
 import LoggedUserContext from "../../context/LoggedUserContext";
 import CreateFolder from "../CreateFolder/CreateFolder";
-import {Avatar, Container, IconButton, Typography, Divider } from "@mui/material";
+import {Avatar, Container, IconButton, Typography, Divider,CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -12,7 +12,7 @@ import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import DeleteIcon from "@mui/icons-material/Delete";
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 
-const FoldersView = ({ handleViewFolderItems, handleRemoveFolder }) => {
+const FoldersView = ({ handleViewFolderItems, handleRemoveFolder, loadingFolder, loadingDelete, idFolderSelected }) => {
   const loginContext = useContext(LoggedUserContext);
   const foldersData = useContext(UserTodolistContext);
   const navigate = useNavigate();
@@ -43,7 +43,8 @@ const FoldersView = ({ handleViewFolderItems, handleRemoveFolder }) => {
           <IconButton onClick={() => handleRemoveFolder(folder)}>
             <DeleteIcon />
           </IconButton>
-
+			{loadingDelete && folder.idFolder === idFolderSelected ? <CircularProgress size={15}/> : ""}
+			{loadingFolder && folder.idFolder === idFolderSelected ? <CircularProgress size={15}/> : ""}
         </Typography>
       </ListItem>
 	  <Divider variant="middle"/>

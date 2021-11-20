@@ -23,7 +23,7 @@ const CreateTaskView = ({ createTask, loading, error }) => {
                 size={"small"}
                 sx={{fontSize:5}}
             >
-                <Typography>New Task</Typography>
+                <Typography>Save</Typography>
             </LoadingButton>
         </Container>
 		{error ? <Container maxWidth="sm"  sx={{

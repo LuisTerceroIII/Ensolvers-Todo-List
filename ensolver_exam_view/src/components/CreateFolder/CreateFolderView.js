@@ -12,7 +12,8 @@ const CreateFolderView = ({ createNewFolder, loading, error }) => {
         <Container maxWidth={"sm"} sx={{
             display:"flex",
             justifyContent: "center",
-            marginTop: 3
+            marginTop: 3,
+			marginBottom: 10
         }}>
           <TextField label={"new Folder"} {...register("newFolder")} size={"small"}>
             {" "}
@@ -20,10 +21,11 @@ const CreateFolderView = ({ createNewFolder, loading, error }) => {
           </TextField>
           <LoadingButton
             type={"submit"}
-            variant={"outlined"}
+            variant={"contained"}
 			size="small"
             endIcon={<SaveIcon />}
             loading={loading}
+
            
           >
             <Typography>Save</Typography>

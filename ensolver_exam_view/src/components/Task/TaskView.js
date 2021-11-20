@@ -2,16 +2,16 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import {Container, IconButton, TextField, Typography, Checkbox } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
-import SaveIcon from "@mui/icons-material/Save";
 import {LoadingButton} from "@mui/lab";
 const TaskView = ({
   isCheck,
   description,
   changeCheckState,
   editDescription,
-  loading
+  loading,
+  activateEdition,
+  setActivateEdition
 }) => {
-  const [activateEdition, setActivateEdition] = useState(false);
   const { handleSubmit, register } = useForm();
   return (
       <Container maxWidth={"sm"}>
@@ -23,6 +23,7 @@ const TaskView = ({
           }}>
               <Checkbox type={"checkbox"} checked={isCheck} onChange={changeCheckState} />
               <Typography variant={"body1"} >{description}</Typography>
+
               <IconButton onClick={() => setActivateEdition(!activateEdition)}>
                   <EditIcon/>
               </IconButton>

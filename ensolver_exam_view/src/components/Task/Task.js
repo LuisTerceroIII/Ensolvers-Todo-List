@@ -6,13 +6,14 @@ const Task = ({ isCheck, description, taskId }) => {
   const [checked, setChecked] = useState(isCheck);
   const [descriptionState, setDescription] = useState(description);
   const [loading, setLoading] = useState(false);
+  const [activateEdition, setActivateEdition] = useState(false);
 
   const handleChangeCheckState = () => {
     setChecked(!checked);
   };
 
   const handleEditDescription = (data, e) => {
-    e.target.reset();
+	e.target.reset();
     if (data.editDescription.length > 0) {
       setDescription(data.editDescription);
     }
@@ -24,7 +25,10 @@ const Task = ({ isCheck, description, taskId }) => {
       TodoApiService()
         .updateTaskDescription(taskId, descriptionState)
         .then((res) => {
-          if(res.status === 202) setLoading(false);
+          if(res.status === 202) {
+			setLoading(false);
+			setActivateEdition(false);
+		  }
         });
     }
   }, [descriptionState]);
@@ -42,6 +46,8 @@ const Task = ({ isCheck, description, taskId }) => {
       changeCheckState={handleChangeCheckState}
       editDescription={handleEditDescription}
       loading={loading}
+	  activateEdition={activateEdition}
+	  setActivateEdition={setActivateEdition}
     />
   );
 };

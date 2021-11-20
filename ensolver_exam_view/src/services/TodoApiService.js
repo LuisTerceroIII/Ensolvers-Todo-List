@@ -3,7 +3,7 @@ import axios from "axios";
 export const TodoApiService = () => {
   const PORT = "8080";
   const apiVersion = "to-do-list/v1";
-  const localHostURL = `http://localhost:${PORT}/${apiVersion}`;
+  const localHostURL = `http://192.168.0.104:${PORT}/${apiVersion}`;
 
   const searchUser = async (username) => {
     try {
