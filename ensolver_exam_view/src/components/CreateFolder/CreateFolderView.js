@@ -1,11 +1,11 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import {Container, Typography} from "@mui/material";
+import {Container, Typography, Alert} from "@mui/material";
 import TextField from "@mui/material/TextField";
 import SaveIcon from "@mui/icons-material/Save";
 import { LoadingButton } from "@mui/lab";
 
-const CreateFolderView = ({ createNewFolder, loading }) => {
+const CreateFolderView = ({ createNewFolder, loading, error }) => {
   const { handleSubmit, register } = useForm();
   return (
     <form onSubmit={handleSubmit(createNewFolder)}>
@@ -21,13 +21,21 @@ const CreateFolderView = ({ createNewFolder, loading }) => {
           <LoadingButton
             type={"submit"}
             variant={"outlined"}
+			size="small"
             endIcon={<SaveIcon />}
             loading={loading}
-            sx={{fontSize:5}}
+           
           >
             <Typography>Save</Typography>
           </LoadingButton>
         </Container>
+		{error ? <Container maxWidth="sm"  sx={{
+			display: "flex",
+			marginTop: 3
+		}}><Alert severity="error" variant="outlined" sx={{
+			maxWidth: "35%",
+			margin: "0 auto"
+		}}>Error connecting to the server</Alert></Container> : ""}
     </form>
 
   );

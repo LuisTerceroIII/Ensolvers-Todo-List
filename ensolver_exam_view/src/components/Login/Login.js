@@ -10,23 +10,36 @@ const Login = () => {
   const foldersData = useContext(UserTodolistContext);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [userNotExist, setUserNotExist] = useState(false);
+  const [error, setError] = useState(false); 	
 
   useEffect(() => {
     if (loginContext.credentials !== "") {
       setLoading(true);
+	  setError(false);
+	  setUserNotExist(false);
       TodoApiService()
         .searchUser(loginContext.credentials)
         .then((res) => {
           if (res.status === 202) {
             loginContext.setLogged(true);
             foldersData.setFolders(res.data);
+			setUserNotExist(false);
             setLoading(false);
+			setError(false);
             navigate("/folders");
-          } else setLoading(false);
+          } else if(res.status === 204) {
+				setUserNotExist(true);
+				setLoading(false);
+		    } else {
+				setError(true);
+				setLoading(false);
+			} 
         })
         .catch((err) => {
           console.log("ERROR::::", err);
           setLoading(false);
+		  setError(true);
         });
     }
   }, [loginContext.credentials]);
@@ -34,7 +47,7 @@ const Login = () => {
   return loginContext.logged ? (
     <Navigate to={"/folders"} />
   ) : (
-    <LoginView loading={loading} />
+    <LoginView loading={loading} error={error} userNotExist={userNotExist} />
   );
 };
 

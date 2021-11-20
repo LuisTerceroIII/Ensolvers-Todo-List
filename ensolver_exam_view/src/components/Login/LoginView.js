@@ -1,10 +1,10 @@
 import React, { useContext } from "react";
 import LoggedUserContext from "../../context/LoggedUserContext";
 import { useForm } from "react-hook-form";
-import {Typography, TextField, Container} from "@mui/material";
+import {Typography, TextField, Container, Alert} from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 
-const LoginView = ({ loading }) => {
+const LoginView = ({ loading, error, userNotExist }) => {
   const loginContext = useContext(LoggedUserContext);
   const { register, handleSubmit } = useForm();
   const onSubmit = (data) => {
@@ -43,7 +43,26 @@ const LoginView = ({ loading }) => {
               </LoadingButton>
           </Container>
       </form>
+	{error ? <Container maxWidth="sm"  sx={{
+		display: "flex",
+		marginTop: 3
+	}}><Alert severity="error" variant="outlined"  sx={{
+		maxWidth: "35%",
+		margin: "0 auto"
+	}}>Error connecting to the server</Alert></Container> : ""}
+	
+	
+		{userNotExist ? <Container maxWidth="sm"  sx={{
+		display: "flex",
+		marginTop: 3
+	}}><Alert severity="info" variant="outlined"  sx={{
+		maxWidth: "35%",
+		margin: "0 auto"
+	}}>User does not exist</Alert></Container> : ""}
+
     </Container>
+
+
   );
 };
 

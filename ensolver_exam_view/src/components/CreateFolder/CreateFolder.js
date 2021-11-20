@@ -8,6 +8,8 @@ const CreateFolder = () => {
   const [folderName, setFolderName] = useState("");
   const { idUser } = foldersData.folders[0];
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+
   const handleCreateNewFolder = (data, e) => {
     e.target.reset();
     if (data.newFolder.length > 0) {
@@ -18,6 +20,7 @@ const CreateFolder = () => {
   useEffect(() => {
     if (folderName !== "") {
       setLoading(true);
+	  setError(false);
       TodoApiService()
         .newFolder(idUser, folderName)
         .then((res) => {
@@ -25,7 +28,10 @@ const CreateFolder = () => {
             foldersData.folders.push(res.data);
             foldersData.setFolders([...foldersData.folders]);
             setLoading(false);
-          }
+          } else {
+			setError(true);
+			setLoading(false);
+			}
         });
     }
   }, [folderName]);
@@ -34,6 +40,7 @@ const CreateFolder = () => {
     <CreateFolderView
       createNewFolder={handleCreateNewFolder}
       loading={loading}
+	  error={error}
     />
   );
 };

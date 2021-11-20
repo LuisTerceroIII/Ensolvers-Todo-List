@@ -36,3 +36,5 @@ ensolver_exam_view/node_modules
 
 
 
+/target/
+/bin/
